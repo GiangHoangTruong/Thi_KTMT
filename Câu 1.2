@@ -1,0 +1,59 @@
+.data
+prompt: .asciiz "Nhap vao so nguyen duong N: "
+fibonacci: .asciiz "Day Fibonacci tu 1 den N: "
+cach: .asciiz " "
+
+.text
+.globl main
+
+main:
+    # In ra thông báo yêu cầu nhập N
+    li $v0, 4
+    la $a0, prompt
+    syscall
+
+    # Nhập số N từ bàn phím
+    li $v0, 5
+    syscall
+    move $t0, $v0  # Lưu giá trị N vào thanh ghi $t0
+
+    # In ra thông báo kết quả
+    li $v0, 4
+    la $a0, fibonacci
+    syscall
+
+    # Tính và in ra các số Fibonacci nhỏ hơn N
+    li $t1, 1  # Phần tử đầu tiên của dãy Fibonacci
+    li $t2, 1  # Phần tử thứ hai của dãy Fibonacci
+
+    li $v0, 1
+    move $a0, $t1
+    syscall
+
+    li $v0, 4
+    la $a0, cach
+    syscall
+
+    blez $t0, exit  # Nếu N <= 0, thoát khỏi chương trình
+
+loop:
+    add $t3, $t1, $t2  # Tính phần tử tiếp theo của dãy Fibonacci
+    move $t1, $t2     # Dịch chuyển các phần tử
+    move $t2, $t3
+
+    # Kiểm tra nếu phần tử tiếp theo lớn hơn N, thoát khỏi vòng lặp
+    bge $t3, $t0, exit
+
+    li $v0, 1
+    move $a0, $t3
+    syscall
+
+    li $v0, 4
+    la $a0, cach
+    syscall
+
+    j loop
+
+exit:
+    li $v0, 10
+    syscall
