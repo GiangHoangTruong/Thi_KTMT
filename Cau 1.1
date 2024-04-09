@@ -1,6 +1,7 @@
 .data
-prompt: .asciiz "Nhap so nguyen duong n: "
-result: .asciiz "Cac so chia het cho ca 3 va 5 nho hon n la: "
+prompt: .asciiz "Nhap vao so nguyen duong N: "
+result: .asciiz "Cac so chia het cho 3 hoac 5 nho hon N: "
+cach: .asciiz " "
 
 .text
 .globl main
@@ -21,29 +22,40 @@ main:
     la $a0, result
     syscall
 
-    # Duyệt từ 1 đến N-1 và in ra các số chia hết cho cả 3 và 5
+    # Duyệt từ 1 đến N-1 và in ra các số chia hết cho 3 và 5
     li $t1, 1  # Khởi tạo biến đếm $t1 = 1
 
 loop:
     # Kiểm tra nếu $t1 chia hết cho cả 3 và 5
     rem $t2, $t1, 3
-    bnez $t2, not_divisible
+    beqz $t2, divisible_by_3
     rem $t2, $t1, 5
     bnez $t2, not_divisible
 
-    # In ra số chia hết cho cả 3 và 5
+    
+divisible_by_3:
+    # Kiểm tra nếu $t1 < N
+    slt $t2, $t1, $t0
+    beqz $t2, exit
+
+    # In ra số chia hết cho 3 và 5
     li $v0, 1
     move $a0, $t1
     syscall
+    
+    # In ra dấu cách
+    li $v0, 4
+    la $a0, cach
+    syscall
+    
+    
 
 not_divisible:
     # Tăng biến đếm $t1 lên 1
     addi $t1, $t1, 1
+    j loop
 
-    # Kiểm tra nếu $t1 < N
-    slt $t2, $t1, $t0
-    bnez $t2, loop
-
+exit:
     # Kết thúc chương trình
     li $v0, 10
     syscall
