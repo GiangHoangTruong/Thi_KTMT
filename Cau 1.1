@@ -1,0 +1,49 @@
+.data
+prompt: .asciiz "Nhap so nguyen duong n: "
+result: .asciiz "Cac so chia het cho ca 3 va 5 nho hon n la: "
+
+.text
+.globl main
+
+main:
+    # In ra thông báo yêu cầu nhập N
+    li $v0, 4
+    la $a0, prompt
+    syscall
+
+    # Nhập số N từ bàn phím
+    li $v0, 5
+    syscall
+    move $t0, $v0  # Lưu giá trị N vào thanh ghi $t0
+
+    # In ra thông báo kết quả
+    li $v0, 4
+    la $a0, result
+    syscall
+
+    # Duyệt từ 1 đến N-1 và in ra các số chia hết cho cả 3 và 5
+    li $t1, 1  # Khởi tạo biến đếm $t1 = 1
+
+loop:
+    # Kiểm tra nếu $t1 chia hết cho cả 3 và 5
+    rem $t2, $t1, 3
+    bnez $t2, not_divisible
+    rem $t2, $t1, 5
+    bnez $t2, not_divisible
+
+    # In ra số chia hết cho cả 3 và 5
+    li $v0, 1
+    move $a0, $t1
+    syscall
+
+not_divisible:
+    # Tăng biến đếm $t1 lên 1
+    addi $t1, $t1, 1
+
+    # Kiểm tra nếu $t1 < N
+    slt $t2, $t1, $t0
+    bnez $t2, loop
+
+    # Kết thúc chương trình
+    li $v0, 10
+    syscall
